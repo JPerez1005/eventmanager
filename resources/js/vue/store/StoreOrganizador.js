@@ -6,19 +6,29 @@ export const useOrganizadorStore = defineStore('organizador', {
   state: () => ({
     organizadores: [],
     isLoading: false,
+    pagination: {
+      current_page: 1,
+      last_page: 1,
+    },
   }),
   actions: {
-    setOrganizadores(organizadores) {
+    setOrganizadores(organizadores, pagination) {
       this.organizadores = organizadores;
+      this.pagination = pagination;
     },
     agregarOrganizador(organizador) {
       this.organizadores.push(organizador);
     },
-    async fetchOrganizadores() {
+    async fetchOrganizadores(page = 1, search = '') {
       this.isLoading = true;
       try {
-        const response = await axios.get('http://eventmanager.test/api/organizador/paginate?page=1');
-        this.setOrganizadores(response.data.data);
+        const response = await axios.get(`http://eventmanager.test/api/organizador/paginate`, {
+          params: { page, search }
+        });
+        this.setOrganizadores(response.data.data, {
+          current_page: response.data.current_page,
+          last_page: response.data.last_page,
+        });
       } catch (error) {
         console.error("Error al cargar los organizadores:", error);
       } finally {

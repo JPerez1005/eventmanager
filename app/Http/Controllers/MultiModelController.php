@@ -28,11 +28,19 @@ class MultiModelController extends Controller
     }
 
     // Paginación
-    public function index($type)
+    public function index(Request $request, $type)
     {
         $model = $this->getModel($type);
-        return response()->json($model::paginate(10));
+        $query = $model::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('nombre', 'like', "%{$search}%");
+        }
+
+        return response()->json($query->paginate(5));
     }
+
 
     // Crear un nuevo registro
     public function store(Request $request, $type)
