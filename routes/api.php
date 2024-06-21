@@ -1,19 +1,18 @@
 <?php
 
+use App\Http\Controllers\MultiModelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('{type}')->group(function () {
+    Route::get('/all', [MultiModelController::class, 'all']);
+    Route::get('/paginate', [MultiModelController::class, 'index']);
+    Route::post('/', [MultiModelController::class, 'store']);
+    Route::get('/{id}', [MultiModelController::class, 'show']);
+    Route::put('/{id}', [MultiModelController::class, 'update']);
+    Route::delete('/{id}', [MultiModelController::class, 'destroy']);
 });
